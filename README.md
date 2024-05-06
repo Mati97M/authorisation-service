@@ -27,4 +27,4 @@ endpoint_path: `String`</br>
 roles:  `List<Role>`</br>
 
 ### Class diagram:
-![class diagram](authorizationServiceClassDiagram.png)
+![class diagram](AuthorizationPlainJAVA.png)
