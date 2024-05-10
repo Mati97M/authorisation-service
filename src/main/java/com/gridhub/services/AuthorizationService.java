@@ -11,7 +11,7 @@ import com.gridhub.repositories.ResourceRepository;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.util.Optional;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthorizationService {
@@ -26,19 +26,18 @@ public class AuthorizationService {
     }
 
     public boolean hasPermissionToAccessResource(UserInfo userInfo, ResourceInfo resourceInfo) throws EntityNotFoundException {
-        Optional<Resource> requestedResource = resourceRepository.getResource(resourceInfo.serviceName());
-        if (requestedResource.isEmpty()) {
-            throw new EntityNotFoundException();
-        }
+        Resource requestedResource = resourceRepository.getResource(resourceInfo.serviceName())
+                .orElseThrow(EntityNotFoundException::new);
+        List<Role> requestedResourceRoles = requestedResource.getRoles();
 
-        if (userInfo.role().equals(Role.ADMIN) || requestedResource.get().getRoles().contains(Role.NOT_RESTRICTED)) {
+        if (userInfo.role().equals(Role.ADMIN) || requestedResourceRoles.contains(Role.NOT_RESTRICTED)) {
             return true;
         }
-        if (requestedResource.get().getRoles().contains(Role.USER_SPECIFIC)) {
-            return userInfo.userSpecificId().equals(requestedResource.get().getUserSpecificId());
+        if (requestedResourceRoles.contains(Role.USER_SPECIFIC)) {
+            return userInfo.userSpecificId().equals(requestedResource.getUserSpecificId());
         }
 
-        return requestedResource.get().getRoles().contains(userInfo.role());
+        return requestedResourceRoles.contains(userInfo.role());
     }
 
     public void registerResource(UserInfo userInfo, Resource resource) throws EndpointPathDuplicatException, ForbiddenAccessException {
