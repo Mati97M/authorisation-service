@@ -1,4 +1,4 @@
 package com.gridhub.exceptions;
 
-public class EntityNotFoundException extends Exception {
+public class EntityNotFoundException extends RuntimeException {
 }

@@ -1,4 +1,4 @@
 package com.gridhub.exceptions;
 
-public class EndpointPathDuplicatException extends Exception {
+public class EndpointPathDuplicatException extends RuntimeException {
 }

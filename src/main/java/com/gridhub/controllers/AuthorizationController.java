@@ -9,7 +9,8 @@ import com.gridhub.exceptions.EndpointPathDuplicatException;
 import com.gridhub.exceptions.EntityNotFoundException;
 import com.gridhub.exceptions.ForbiddenAccessException;
 import com.gridhub.http.HttpResponse;
-import com.gridhub.mappers.ResourceDTOMapper;
+import com.gridhub.mappers.ResourceMapper;
+import com.gridhub.mappers.UserInfoMapper;
 import com.gridhub.models.Resource;
 import com.gridhub.services.AuthorizationService;
 import lombok.NoArgsConstructor;
@@ -18,12 +19,17 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @Slf4j
 public class AuthorizationController {
+    public static final String ACCESS_FORBIDDEN = "Access Forbidden";
+    public static final String ACCESS_TO_RESOURCE_GRANTED = "Access to resource granted";
+    public static final String RESOURCE_NOT_FOUND = "Resource not found";
+    public static final String RESOURCE_WAS_SUCCESSFULLY_REGISTERED = "Resource was successfully registered";
+    public static final String METHOD_NOT_ALLOWED = "Method Not Allowed";
+    public static final String RESOURCE_WAS_SUCCESSFULLY_UNREGISTERED = "Resource was successfully unregistered";
     private final AuthorizationService authorizationService = AuthorizationService.getInstance();
-    private final ResourceDTOMapper resourceDTOMapper = new ResourceDTOMapper();
 
     public HttpResponse hasPermissionToAccessResource(ResourceAccessDTO resourceAccessDTO) {
-        ResourceInfo resourceInfo = resourceDTOMapper.mapToResourceInfo(resourceAccessDTO);
-        UserInfo userInfo = resourceDTOMapper.mapToUserInfo(resourceAccessDTO);
+        ResourceInfo resourceInfo = ResourceMapper.INSTANCE.mapToResourceInfo(resourceAccessDTO);
+        UserInfo userInfo = UserInfoMapper.INSTANCE.mapToUserInfo(resourceAccessDTO);
         boolean hasPermission = false;
         int statusCode;
         String body;
@@ -31,47 +37,47 @@ public class AuthorizationController {
 
         try {
             hasPermission = authorizationService.hasPermissionToAccessResource(userInfo, resourceInfo);
-            if(hasPermission) {
+            if (hasPermission) {
                 statusCode = 200;
-                body = "Access to resource granted";
+                body = ACCESS_TO_RESOURCE_GRANTED;
                 endpointPath = resourceInfo.endpointPath();
             } else {
                 statusCode = 403;
-                body = "Access Forbidden";
+                body = ACCESS_FORBIDDEN;
             }
         } catch (EntityNotFoundException e) {
             statusCode = 404;
-            body = "Resource not found";
+            body = RESOURCE_NOT_FOUND;
             log.error(e.getMessage());
         }
         return new HttpResponse(statusCode, body, endpointPath);
     }
 
     public HttpResponse registerResource(ResourceRegistrationDTO resourceRegistrationDTO) {
-        Resource resource = resourceDTOMapper.mapToResource(resourceRegistrationDTO);
-        UserInfo userInfo = resourceDTOMapper.mapToUserInfo(resourceRegistrationDTO);
+        Resource resource = ResourceMapper.INSTANCE.mapToResource(resourceRegistrationDTO);
+        UserInfo userInfo = UserInfoMapper.INSTANCE.mapToUserInfo(resourceRegistrationDTO);
         int statusCode;
         String body = null;
 
         try {
             authorizationService.registerResource(userInfo, resource);
             statusCode = 200;
-            body = "Resource was successfully registered";
+            body = RESOURCE_WAS_SUCCESSFULLY_REGISTERED;
         } catch (EndpointPathDuplicatException e) {
             statusCode = 405;
-            body = "Method Not Allowed";
+            body = METHOD_NOT_ALLOWED;
             log.error(e.getMessage());
         } catch (ForbiddenAccessException e) {
             statusCode = 403;
-            body = "Access Forbidden";
+            body = ACCESS_FORBIDDEN;
             log.error(e.getMessage());
         }
         return new HttpResponse(statusCode, body, resourceRegistrationDTO.endpointPath());
     }
 
     public HttpResponse unregisterResource(ResourceDeregistrationDTO resourceDeregistrationDTO) {
-        ResourceInfo resourceInfo = resourceDTOMapper.mapToResourceInfo(resourceDeregistrationDTO);
-        UserInfo userInfo = resourceDTOMapper.mapToUserInfo(resourceDeregistrationDTO);
+        ResourceInfo resourceInfo = ResourceMapper.INSTANCE.mapToResourceInfo(resourceDeregistrationDTO);
+        UserInfo userInfo = UserInfoMapper.INSTANCE.mapToUserInfo(resourceDeregistrationDTO);
         int statusCode;
         String body = null;
         String endpointPath = null;
@@ -79,19 +85,17 @@ public class AuthorizationController {
         try {
             authorizationService.unregisterResource(userInfo, resourceInfo);
             statusCode = 200;
-            body = "Resource was successfully unregistered";
+            body = RESOURCE_WAS_SUCCESSFULLY_UNREGISTERED;
             endpointPath = resourceDeregistrationDTO.endpointPath();
         } catch (EntityNotFoundException e) {
             statusCode = 404;
-            body = "Resource not found";
+            body = RESOURCE_NOT_FOUND;
             log.error(e.getMessage());
         } catch (ForbiddenAccessException e) {
             statusCode = 403;
-            body = "Access Forbidden";
+            body = ACCESS_FORBIDDEN;
             log.error(e.getMessage());
         }
         return new HttpResponse(statusCode, body, endpointPath);
     }
-
-    //validate JWT token?
 }

@@ -41,24 +41,32 @@ public class AuthorizationService {
     }
 
     public void registerResource(UserInfo userInfo, Resource resource) throws EndpointPathDuplicatException, ForbiddenAccessException {
-        if (userInfo.role().equals(Role.ADMIN)) {
-            if (resourceRepository.getResource(resource.getServiceName()).isPresent()) {
-                throw new EndpointPathDuplicatException();
-            }
-            resourceRepository.registerResource(resource);
-        } else {
+        if (!userInfo.role().equals(Role.ADMIN)) {
             throw new ForbiddenAccessException();
+        } else {
+            resourceRepository.getResource(resource.getServiceName())
+                    .ifPresentOrElse(
+                            alreadyExistingResource -> {
+                                throw new EndpointPathDuplicatException();
+                            },
+                            () -> resourceRepository.registerResource(resource)
+                    );
         }
     }
 
     public void unregisterResource(UserInfo userInfo, ResourceInfo resourceInfo) throws EntityNotFoundException, ForbiddenAccessException {
-        if (userInfo.role().equals(Role.ADMIN)) {
-            if (resourceRepository.getResource(resourceInfo.serviceName()).isEmpty()) {
-                throw new EntityNotFoundException();
-            }
-            resourceRepository.unregisterResource(resourceInfo.serviceName());
-        } else {
+        if (!userInfo.role().equals(Role.ADMIN)) {
             throw new ForbiddenAccessException();
+        } else {
+            resourceRepository.getResource(resourceInfo.serviceName())
+                    .ifPresentOrElse(
+                            alreadyExistingResource -> {
+                                resourceRepository.unregisterResource(resourceInfo.serviceName());
+                            },
+                            () -> {
+                                throw new EntityNotFoundException();
+                            }
+                    );
         }
     }
 }
