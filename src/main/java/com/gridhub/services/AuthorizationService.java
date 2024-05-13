@@ -25,7 +25,7 @@ public class AuthorizationService {
         return instance;
     }
 
-    public boolean hasPermissionToAccessResource(UserInfo userInfo, ResourceInfo resourceInfo) throws EntityNotFoundException {
+    public boolean hasPermissionToAccessResource(UserInfo userInfo, ResourceInfo resourceInfo) {
         Resource requestedResource = resourceRepository.getResource(resourceInfo.serviceName())
                 .orElseThrow(EntityNotFoundException::new);
         List<Role> requestedResourceRoles = requestedResource.getRoles();
@@ -40,7 +40,7 @@ public class AuthorizationService {
         return requestedResourceRoles.contains(userInfo.role());
     }
 
-    public void registerResource(UserInfo userInfo, Resource resource) throws EndpointPathDuplicatException, ForbiddenAccessException {
+    public void registerResource(UserInfo userInfo, Resource resource) {
         if (!userInfo.role().equals(Role.ADMIN)) {
             throw new ForbiddenAccessException();
         } else {
@@ -54,7 +54,7 @@ public class AuthorizationService {
         }
     }
 
-    public void unregisterResource(UserInfo userInfo, ResourceInfo resourceInfo) throws EntityNotFoundException, ForbiddenAccessException {
+    public void unregisterResource(UserInfo userInfo, ResourceInfo resourceInfo) {
         if (!userInfo.role().equals(Role.ADMIN)) {
             throw new ForbiddenAccessException();
         } else {

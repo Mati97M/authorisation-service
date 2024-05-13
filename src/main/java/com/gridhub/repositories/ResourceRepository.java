@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ResourceRepository {
-    private Map<String, Resource> repository = new HashMap<>();
+    private final Map<String, Resource> repository = new HashMap<>();
     private static ResourceRepository instance;
 
     public static ResourceRepository getInstance() {
