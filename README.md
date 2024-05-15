@@ -28,3 +28,13 @@ roles:  `List<Role>`</br>
 
 ### Class diagram:
 ![class diagram](AuthorizationPlainJAVA.png)
+
+## Using Compose manifest
+### To run db for the app:
+1) being in the root folder of the project, type in the terminal: 'cd docker'
+2) type 'docker-compose --env-file=docker/.env -d up' to run container with postgres in detached mode
+3) connect to db using DBeaver, providing the following info:
+* port: 5432
+* user: dev
+* password: MyPass
+* database: auth
