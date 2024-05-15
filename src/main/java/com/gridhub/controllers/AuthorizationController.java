@@ -53,7 +53,7 @@ public class AuthorizationController {
         } catch (Exception e) {
             statusCode = 500;
             body = UNKNOWN_ERROR;
-            log.error(UNKNOWN_ERROR.concat(": %s").formatted(e.getMessage()));
+            log.error(UNKNOWN_ERROR.concat(": %s").formatted(e.getMessage()), e);
         }
         return new HttpResponse(statusCode, body, endpointPath);
     }
@@ -79,7 +79,7 @@ public class AuthorizationController {
         } catch (Exception e) {
             statusCode = 500;
             body = UNKNOWN_ERROR;
-            log.error(UNKNOWN_ERROR.concat(": %s").formatted(e.getMessage()));
+            log.error(UNKNOWN_ERROR.concat(": %s").formatted(e.getMessage()), e);
         }
         return new HttpResponse(statusCode, body, resourceRegistrationDTO.endpointPath());
     }
@@ -107,7 +107,7 @@ public class AuthorizationController {
         } catch (Exception e) {
             statusCode = 500;
             body = UNKNOWN_ERROR;
-            log.error(UNKNOWN_ERROR.concat(": %s").formatted(e.getMessage()));
+            log.error(UNKNOWN_ERROR.concat(": %s").formatted(e.getMessage()), e);
         }
         return new HttpResponse(statusCode, body, endpointPath);
     }
