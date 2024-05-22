@@ -31,6 +31,9 @@ userSpecificId `Long`</br>
 ### Class diagram:
 ![class diagram](AuthorizationPlainJAVA.png)
 
+### Entity Relationship Diagram
+![ERD](ERD.png)
+
 ## Using Compose manifest
 ### To run db for the app:
 1) being in the root folder of the project, type in the terminal: 'cd docker'
