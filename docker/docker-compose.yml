@@ -3,7 +3,8 @@ services:
     image: postgres:16.2
     restart: always
     volumes:
-      - auth-vol:/auth/data
+      - auth-vol:/var/lib/auth/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_DB=${POSTGRES_DB}
