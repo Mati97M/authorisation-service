@@ -1,21 +1,32 @@
 --CRUD START
 --CREATE
-INSERT INTO resources (endpointPath, serviceName, roles) VALUES
-('test', 'Test Microservice', 'ADMIN');
+INSERT INTO resources VALUES
+    (19, 'test', 'TEST Microservice', NULL);
+
 --READ
 SELECT *
 FROM resources;
 --UPDATE
 UPDATE resources
-SET roles = 'ADMIN USER_SPECIFIC'
-WHERE endpointPath = '/api/discount/associate/user';
+SET userSpecificId = 10
+WHERE endpointPath = 'test';
 --DELETE
 DELETE FROM resources
 WHERE endpointPath = 'test'
 --CRUD END
 
-SELECT *
-FROM resources
-WHERE length(endpointPath) > length('ADMIN')
-ORDER BY length(endpointPath) DESC
-LIMIT 2;
+SELECT res.id, res.endpointPath, res.serviceName, COUNT(rr.role) as roles_num
+FROM resources res
+JOIN resources_roles rr
+ON res.id = rr.resource_id
+GROUP BY res.id
+HAVING COUNT(res.id) > 1
+ORDER BY res.serviceName;
+LIMIT 3;
+
+SELECT res.id, res.endpointPath, res.serviceName, COUNT(rr.role) as roles_num
+FROM resources res
+JOIN resources_roles rr
+ON res.id = rr.resource_id
+GROUP BY res.id
+ORDER BY res.serviceName;
