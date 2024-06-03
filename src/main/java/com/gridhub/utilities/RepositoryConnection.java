@@ -1,9 +1,8 @@
 package com.gridhub.utilities;
 
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,20 +13,23 @@ import java.util.function.Function;
 
 @Slf4j
 public class RepositoryConnection implements AutoCloseable {
-    private final Connection connection;
+    private final HikariDataSource dataSource;
 
     public RepositoryConnection(ConnectionProperties connectionProperties) throws SQLException {
-        this.connection = getConnection(connectionProperties);
+        dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl(connectionProperties.getUrl());
+        dataSource.setUsername(connectionProperties.getUser());
+        dataSource.setPassword(connectionProperties.getPassword());
     }
 
     @Override
-    public void close() throws Exception {
-        connection.close();
+    public void close() {
+        dataSource.close();
     }
 
 
     public void execute(String query, Object... args) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(query)) {
             for (int i = 0; i < args.length; i++) {
                 preparedStatement.setObject(i + 1, args[i]);
             }
@@ -38,7 +40,7 @@ public class RepositoryConnection implements AutoCloseable {
     }
 
     public void execute(String query, Consumer<PreparedStatement> consumer) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(query)) {
             consumer.accept(preparedStatement);
             preparedStatement.execute();
         } catch (SQLException e) {
@@ -47,7 +49,7 @@ public class RepositoryConnection implements AutoCloseable {
     }
 
     public <T> T findOne(String query, Function<ResultSet, T> mapper, Object... args) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(query)) {
             for (int i = 0; i < args.length; i++) {
                 preparedStatement.setObject(i + 1, args[i]);
             }
@@ -71,7 +73,7 @@ public class RepositoryConnection implements AutoCloseable {
 
     public <T> List<T> findMany(String query, Function<ResultSet, T> mapper, Object... args) {
         List<T> results = new ArrayList<>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(query)) {
             for (int i = 0; i < args.length; i++) {
                 preparedStatement.setObject(i + 1, args[i]);
             }
@@ -87,11 +89,4 @@ public class RepositoryConnection implements AutoCloseable {
         return results;
     }
 
-    private Connection getConnection(ConnectionProperties connectionProperties) throws SQLException {
-        return DriverManager.getConnection(
-                connectionProperties.getUrl(),
-                connectionProperties.getUser(),
-                connectionProperties.getPassword()
-        );
-    }
 }

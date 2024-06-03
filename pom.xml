@@ -24,6 +24,7 @@
         <lombok.version>1.18.32</lombok.version>
         <h2.version>2.2.224</h2.version>
         <postgresql.Driver.version>42.7.3</postgresql.Driver.version>
+        <hikari.version>5.1.0</hikari.version>
     </properties>
 
     <dependencies>
@@ -96,6 +97,11 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.Driver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${hikari.version}</version>
         </dependency>
 
     </dependencies>

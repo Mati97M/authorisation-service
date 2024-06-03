@@ -38,12 +38,7 @@ class RepositoryConnectionTest {
     @AfterEach
     void tearDownTest() {
         if (repositoryConnection != null) {
-            try {
-                repositoryConnection.close();
-                repositoryConnection = null;
-            } catch (Exception e) {
-                throw new IllegalStateException("Unable to close repository connection", e);
-            }
+            repositoryConnection.close();
         }
     }
 
