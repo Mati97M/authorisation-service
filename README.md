@@ -48,3 +48,17 @@ userSpecificId `Long`</br>
 - `docker-compose stop`: Stops running containers without removing them. They can be started again with `docker-compose start`.
 
 - `docker-compose down`: Stops the containers and removes them along with their associated networks.
+
+
+#### Adding JDBC to the capstone project
+* <b>void execute(String query, Object... args)  vs  void execute(String query, Consumer<PreparedStatement> consumer)</b> </br>
+Consumer is send from the outside - we do not know, what will be the modifications.
+Execute method is isolated from the query structure and does only one thing, which is responsible for i.e. execution.
+* <b>Datasource vs DriverManager</b></br>
+DriverManager demands knowledge of: host, port, username, password,  to get connection to a database. Datasource based apps are more portable - 
+programmer does not have hardcode the JDBC driver or url.</br>
+Improved Performance & Scalability: Datasource support connection pooling (connections recycling), in the opposite to DriverManager.
+Datasource can be a database or even a file.
+
+
+

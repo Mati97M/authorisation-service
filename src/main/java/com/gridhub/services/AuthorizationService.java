@@ -6,27 +6,37 @@ import com.gridhub.enums.Role;
 import com.gridhub.exceptions.EndpointPathDuplicatException;
 import com.gridhub.exceptions.EntityNotFoundException;
 import com.gridhub.exceptions.ForbiddenAccessException;
+import com.gridhub.exceptions.RepositoryInitializationException;
 import com.gridhub.models.Resource;
-import com.gridhub.repositories.ResourceRepository;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import com.gridhub.repositories.Repository;
+import com.gridhub.repositories.dao.RepositoryDAO;
+import lombok.Setter;
 
+import java.sql.SQLException;
 import java.util.List;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthorizationService {
-    private final ResourceRepository resourceRepository = ResourceRepository.getInstance();
+    @Setter
+    private Repository repository;
     private static AuthorizationService instance;
 
     public static AuthorizationService getInstance() {
         if (instance == null) {
-            instance = new AuthorizationService();
+            try {
+                instance = new AuthorizationService(RepositoryDAO.getInstance());
+            } catch (SQLException e) {
+                throw new RepositoryInitializationException();
+            }
         }
         return instance;
     }
 
+    private AuthorizationService(Repository repository) {
+        this.repository = repository;
+    }
+
     public boolean hasPermissionToAccessResource(UserInfo userInfo, ResourceInfo resourceInfo) {
-        Resource requestedResource = resourceRepository.getResource(resourceInfo.serviceName())
+        Resource requestedResource = repository.findResource(resourceInfo.serviceName(), resourceInfo.endpointPath())
                 .orElseThrow(EntityNotFoundException::new);
         List<Role> requestedResourceRoles = requestedResource.getRoles();
 
@@ -44,12 +54,12 @@ public class AuthorizationService {
         if (!userInfo.role().equals(Role.ADMIN)) {
             throw new ForbiddenAccessException();
         } else {
-            resourceRepository.getResource(resource.getServiceName())
+            repository.findResource(resource.getServiceName(), resource.getEndpointPath())
                     .ifPresentOrElse(
                             alreadyExistingResource -> {
                                 throw new EndpointPathDuplicatException();
                             },
-                            () -> resourceRepository.registerResource(resource)
+                            () -> repository.saveResource(resource)
                     );
         }
     }
@@ -58,10 +68,10 @@ public class AuthorizationService {
         if (!userInfo.role().equals(Role.ADMIN)) {
             throw new ForbiddenAccessException();
         } else {
-            resourceRepository.getResource(resourceInfo.serviceName())
+            repository.findResource(resourceInfo.serviceName(), resourceInfo.endpointPath())
                     .ifPresentOrElse(
                             alreadyExistingResource -> {
-                                resourceRepository.unregisterResource(resourceInfo.serviceName());
+                                repository.deleteResource(resourceInfo.serviceName());
                             },
                             () -> {
                                 throw new EntityNotFoundException();
