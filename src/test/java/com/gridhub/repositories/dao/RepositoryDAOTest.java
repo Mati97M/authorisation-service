@@ -9,11 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -69,7 +66,7 @@ class RepositoryDAOTest {
 
         verify(repositoryConnection).execute(
                 anyString(),
-                (Consumer<PreparedStatement>) any());
+                any(Consumer.class));
     }
 
     @Test
@@ -78,7 +75,7 @@ class RepositoryDAOTest {
 
         verify(repositoryConnection).findOne(
                 anyString(),
-                (Function<ResultSet, Resource>) any(),
+                any(),
                 eq(TEST_SERVICE.getServiceName()),
                 eq(TEST_SERVICE.getEndpointPath())
         );
@@ -90,7 +87,7 @@ class RepositoryDAOTest {
 
         verify(repositoryConnection).findMany(
                 anyString(),
-                (Function<ResultSet, Resource>) any()
+                any()
         );
     }
 
@@ -100,7 +97,7 @@ class RepositoryDAOTest {
 
         verify(repositoryConnection).findMany(
                 anyString(),
-                (Function<ResultSet, Resource>) any(),
+                any(),
                 eq(TEST_SERVICE.getServiceName())
         );
     }
@@ -109,7 +106,7 @@ class RepositoryDAOTest {
     void updateResourceWillDoNothingIfResourceDoesNotExistTest() {
         when(repositoryConnection.findOne(
                 anyString(),
-                (Function<ResultSet, Resource>) any(),
+                any(),
                 eq(TEST_SERVICE.getServiceName()),
                 eq(TEST_SERVICE.getEndpointPath())
         )).thenReturn(null);
@@ -125,7 +122,7 @@ class RepositoryDAOTest {
 
         verify(repositoryConnection).findOne(
                 anyString(),
-                (Function<ResultSet, Resource>) any(),
+                any(),
                 eq(TEST_SERVICE.getServiceName()),
                 eq(TEST_SERVICE.getEndpointPath())
         );
@@ -137,7 +134,7 @@ class RepositoryDAOTest {
 
         verify(repositoryConnection).findMany(
                 anyString(),
-                (Function<ResultSet, Role>) any()
+                any()
         );
     }
 }

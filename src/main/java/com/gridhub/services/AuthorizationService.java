@@ -70,9 +70,7 @@ public class AuthorizationService {
         } else {
             repository.findResource(resourceInfo.serviceName(), resourceInfo.endpointPath())
                     .ifPresentOrElse(
-                            alreadyExistingResource -> {
-                                repository.deleteResource(resourceInfo.serviceName());
-                            },
+                            alreadyExistingResource -> repository.deleteResource(resourceInfo.serviceName()),
                             () -> {
                                 throw new EntityNotFoundException();
                             }
