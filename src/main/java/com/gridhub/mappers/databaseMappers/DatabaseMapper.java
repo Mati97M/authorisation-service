@@ -1,6 +1,7 @@
 package com.gridhub.mappers.databaseMappers;
 
 import com.gridhub.enums.Role;
+import com.gridhub.exceptions.DatabaseMapperIllegalStateException;
 import com.gridhub.models.Resource;
 import lombok.extern.slf4j.Slf4j;
 
@@ -8,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.function.Function;
 
 @Slf4j
@@ -36,8 +36,7 @@ public class DatabaseMapper {
                     roles.add(Role.valueOf(resultSet.getString("role")));
                 } while (resultSet.next());
             } catch (SQLException e) {
-                log.error(e.getMessage(), e);
-                return null;
+                throw new DatabaseMapperIllegalStateException();
             }
             return new Resource(serviceName,
                     endpointPath,
@@ -51,7 +50,7 @@ public class DatabaseMapper {
             try {
                 return Role.valueOf(resultSet.getString("role"));
             } catch (SQLException e) {
-                throw new IllegalStateException("Could not map role", e);
+                throw new DatabaseMapperIllegalStateException();
             }
         };
     }

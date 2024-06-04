@@ -90,8 +90,9 @@ public class RepositoryDAO implements Repository {
     public void updateResource(Resource resource) {
         String serviceName = resource.getServiceName();
         String endpointPath = resource.getEndpointPath();
+        Long userSpecificId = resource.getUserSpecificId();
         Resource existingResource = repositoryConnection.findOne(
-                "SELECT * FROM resource WHERE serviceName = ? AND endpointPath = ?",
+                "SELECT * FROM resources WHERE serviceName = ? AND endpointPath = ?",
                 DatabaseMapper.mapToResource(),
                 serviceName,
                 endpointPath
@@ -99,8 +100,7 @@ public class RepositoryDAO implements Repository {
         if (existingResource == null) {
             return;
         }
-        deleteResource(serviceName, endpointPath);
-        saveResource(resource);
+        repositoryConnection.execute("UPDATE resources SET userSpecificId = ? WHERE serviceName = ? AND endpointPath = ?", userSpecificId, serviceName, endpointPath);
     }
 
     public List<Role> findAllRoles() {

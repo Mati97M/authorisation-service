@@ -1,7 +1,7 @@
 package com.gridhub.utilities;
 
+import com.gridhub.exceptions.RepositoryIllegalStateException;
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.extern.slf4j.Slf4j;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,11 +11,10 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-@Slf4j
 public class RepositoryConnection implements AutoCloseable {
     private final HikariDataSource dataSource;
 
-    public RepositoryConnection(ConnectionProperties connectionProperties) throws SQLException {
+    public RepositoryConnection(ConnectionProperties connectionProperties) {
         dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(connectionProperties.getUrl());
         dataSource.setUsername(connectionProperties.getUser());
@@ -35,7 +34,7 @@ public class RepositoryConnection implements AutoCloseable {
             }
             preparedStatement.execute();
         } catch (SQLException e) {
-            log.error(e.getMessage(), e);
+            throw new RepositoryIllegalStateException();
         }
     }
 
@@ -44,7 +43,7 @@ public class RepositoryConnection implements AutoCloseable {
             consumer.accept(preparedStatement);
             preparedStatement.execute();
         } catch (SQLException e) {
-            log.error(e.getMessage(), e);
+            throw new RepositoryIllegalStateException();
         }
     }
 
@@ -66,8 +65,7 @@ public class RepositoryConnection implements AutoCloseable {
                 return result;
             }
         } catch (SQLException e) {
-            log.error(e.getMessage(), e);
-            return null;
+            throw new RepositoryIllegalStateException();
         }
     }
 
@@ -84,7 +82,7 @@ public class RepositoryConnection implements AutoCloseable {
                 }
             }
         } catch (SQLException e) {
-            log.error(e.getMessage(), e);
+            throw new RepositoryIllegalStateException();
         }
         return results;
     }
