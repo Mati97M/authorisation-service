@@ -3,6 +3,7 @@ package com.gridhub.utilities;
 import com.gridhub.exceptions.RepositoryIllegalStateException;
 import com.zaxxer.hikari.HikariDataSource;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -85,6 +86,10 @@ public class RepositoryConnection implements AutoCloseable {
             throw new RepositoryIllegalStateException();
         }
         return results;
+    }
+
+    public Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
     }
 
 }
