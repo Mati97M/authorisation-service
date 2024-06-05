@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS roles (
 
 CREATE TABLE IF NOT EXISTS resources_roles (
     resource_id BIGINT,
-    role varchar(15),
+    role varchar(15) DEFAULT 'ADMIN',
     PRIMARY KEY (resource_id, role),
     FOREIGN KEY (resource_id) REFERENCES resources(id)
     ON DELETE CASCADE,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS resources_roles (
     ON DELETE CASCADE
 );
 
-INSERT INTO resources (id, endpointPath, serviceName, userSpecificId) VALUES
+INSERT INTO resources (endpointPath, serviceName, userSpecificId) VALUES
     ('/api/authorisation/resources', 'Authorisation Microservice', NULL),
     ('/api/blog/post', 'Blog Microservice', NULL),
     ('/api/blog/tag', 'Blog Microservice', NULL),

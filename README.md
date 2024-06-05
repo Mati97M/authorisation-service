@@ -59,6 +59,3 @@ DriverManager demands knowledge of: host, port, username, password,  to get conn
 programmer does not have hardcode the JDBC driver or url.</br>
 Improved Performance & Scalability: Datasource support connection pooling (connections recycling), in the opposite to DriverManager.
 Datasource can be a database or even a file.
-
-
-

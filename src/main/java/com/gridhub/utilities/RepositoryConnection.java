@@ -3,6 +3,7 @@ package com.gridhub.utilities;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -87,6 +88,10 @@ public class RepositoryConnection implements AutoCloseable {
             log.error(e.getMessage(), e);
         }
         return results;
+    }
+
+    public Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
     }
 
 }
