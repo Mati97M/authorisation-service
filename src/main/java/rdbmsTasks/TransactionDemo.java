@@ -25,10 +25,7 @@ public class TransactionDemo {
         try {
             connection.setAutoCommit(true);
             insertResource(connection);
-            if (true) {
-                return;
-            }
-            updateResources_roles(connection);
+            //never does: updateResources_roles(connection);
 
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
@@ -40,10 +37,7 @@ public class TransactionDemo {
             connection.setAutoCommit(false);
             insertResource(connection);
             updateResources_roles(connection);
-            if (true) {
-                throw new IllegalStateException("Some internal error");
-            }
-            connection.commit();
+//            never commits connection.commit();
 
         } catch (SQLException | IllegalStateException e) {
             try {

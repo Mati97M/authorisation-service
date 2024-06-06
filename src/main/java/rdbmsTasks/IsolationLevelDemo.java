@@ -8,17 +8,30 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 
 @Slf4j
 public class IsolationLevelDemo {
     public static void main(String[] args) {
+        Connection connection = null;
+        Savepoint savepoint = null;
         try (RepositoryConnection repositoryConnection = new RepositoryConnection(ConnectionProperties.POSTGRES)) {
+            connection = repositoryConnection.getConnection();
+            connection.setAutoCommit(false);
+            savepoint = connection.setSavepoint("savepoint");
+
             demoWithBadIsolation(repositoryConnection);
             revertChangesOnTable(repositoryConnection);
             demoWithGoodIsolation(repositoryConnection);
             revertChangesOnTable(repositoryConnection);
         } catch (SQLException e) {
-            throw new IllegalStateException(e);
+            if (connection != null) {
+                try {
+                    connection.rollback(savepoint);
+                } catch (SQLException ex) {
+                    throw new IllegalStateException(ex);
+                }
+            }
         }
     }
 
@@ -44,7 +57,7 @@ public class IsolationLevelDemo {
     }
 
     private static void demoWithGoodIsolation(RepositoryConnection repositoryConnection) {
-        final int isolationLevel = Connection.TRANSACTION_SERIALIZABLE;
+        final int isolationLevel = Connection.TRANSACTION_REPEATABLE_READ;
         runQueries(repositoryConnection, isolationLevel);
     }
 
@@ -61,28 +74,27 @@ public class IsolationLevelDemo {
             connection1.setTransactionIsolation(isolationLevel);
             connection2.setTransactionIsolation(isolationLevel);
 
-            String countSQL = "SELECT COUNT(userSpecificId) FROM resources WHERE serviceName = ?;";
-            String sumSQL = "SELECT SUM(userSpecificId) AS sum FROM resources WHERE serviceName = ?;";
+            String countSQL = "SELECT COUNT(*) AS count FROM resources WHERE serviceName = ?;";
             String insertSQL = "INSERT INTO resources (endpointPath, serviceName, userSpecificId) VALUES ('/api/test', 'Blog Microservice', 4);";
 
             try (PreparedStatement preparedStatementInsert = connection2.prepareStatement(insertSQL);
-                 PreparedStatement preparedStatementSum = connection1.prepareStatement(sumSQL)) {
-                preparedStatementSum.setString(1, "Blog Microservice");
+                 PreparedStatement preparedStatementCount = connection1.prepareStatement(countSQL)) {
+                preparedStatementCount.setString(1, "Blog Microservice");
 
-                ResultSet resultSetFirstSum = preparedStatementSum.executeQuery();
-                resultSetFirstSum.next();
-                int firstSum = resultSetFirstSum.getInt("sum");
-                resultSetFirstSum.close();
+                ResultSet resultSetFirstCount = preparedStatementCount.executeQuery();
+                resultSetFirstCount.next();
+                int firstCount = resultSetFirstCount.getInt("count");
+                resultSetFirstCount.close();
 
                 preparedStatementInsert.execute();
                 connection2.commit();
 
-                ResultSet resultSetSecondSum = preparedStatementSum.executeQuery();
-                resultSetSecondSum.next();
-                int secondSum = resultSetSecondSum.getInt("sum");
-                resultSetSecondSum.close();
+                ResultSet resultSetSecondCount = preparedStatementCount.executeQuery();
+                resultSetSecondCount.next();
+                int secondCount = resultSetSecondCount.getInt("count");
+                resultSetSecondCount.close();
 
-                if (firstSum != secondSum) {
+                if (firstCount != secondCount) {
                     log.error("Inconsistency found");
                 } else {
                     log.info("ok");
