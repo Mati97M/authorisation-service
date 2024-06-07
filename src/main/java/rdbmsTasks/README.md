@@ -16,39 +16,35 @@ BEGIN
 END;
 $$;
 ```
-Query without index:
-```sql
-EXPLAIN ANALYZE SELECT userSpecificId FROM resources WHERE userSpecificId % 2 = 0;
-```
-Results -> full scan on the whole table:
-```
-Gather  (cost=1000.00..41157.11 rows=10000 width=8) (actual time=3.665..12320.265 rows=1000779 loops=1)
-  Workers Planned: 2
-  Workers Launched: 2
-  ->  Parallel Seq Scan on resources  (cost=0.00..39157.11 rows=4167 width=8) (actual time=0.054..4118.240 rows=333593 loops=3)
-        Filter: ((userspecificid % '2'::bigint) = 0)
-        Rows Removed by Filter: 333080
-Planning Time: 0.358 ms
-Execution Time: 24246.440 ms
-
-```
----
-Query with index:
-* Creating index on userSpecificId column:
-```sql
-CREATE INDEX usi ON resources(userSpecificId);
-```
+#### Query: 
 ```sql
 EXPLAIN ANALYZE SELECT userSpecificId FROM resources WHERE userSpecificId < 30;
 ```
 
+### without index:
+Results -> full scan on the whole table:
+```
+Seq Scan on resources  (cost=0.00..52647.57 rows=693082 width=8) (actual time=0.037..7178.865 rows=591159 loops=1)
+  Filter: (userspecificid < 30)
+  Rows Removed by Filter: 1408859
+Planning Time: 0.080 ms
+Execution Time: 13805.979 ms
+
+```
+---
+### with index:
+Creating index on userSpecificId column:
+```sql
+CREATE INDEX usi ON resources(userSpecificId);
+```
+
 Results when index exists
 ```
-Index Only Scan using usi on resources  (cost=0.43..12277.57 rows=587265 width=8) (actual time=0.530..6636.635 rows=590508 loops=1)
+Index Only Scan using usi on resources  (cost=0.43..12418.99 rows=593975 width=8) (actual time=0.096..6747.253 rows=590767 loops=1)
   Index Cond: (userspecificid < 30)
   Heap Fetches: 0
-Planning Time: 0.320 ms
-Execution Time: 13075.578 ms
+Planning Time: 0.255 ms
+Execution Time: 13238.777 ms
 ```
 * Optimization on searching with indexes, using `WHERE` clause with `AND`:
     When a index returns few rows and b index returns a lot of them, then DB can only use a index, and then filter the results with the second condition. Without using index b at all.

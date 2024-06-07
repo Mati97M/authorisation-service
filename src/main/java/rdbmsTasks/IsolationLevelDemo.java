@@ -8,30 +8,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Savepoint;
 
 @Slf4j
 public class IsolationLevelDemo {
     public static void main(String[] args) {
-        Connection connection = null;
-        Savepoint savepoint = null;
-        try (RepositoryConnection repositoryConnection = new RepositoryConnection(ConnectionProperties.POSTGRES)) {
-            connection = repositoryConnection.getConnection();
-            connection.setAutoCommit(false);
-            savepoint = connection.setSavepoint("savepoint");
-
+        RepositoryConnection repositoryConnection = new RepositoryConnection(ConnectionProperties.POSTGRES);
+        try {
             demoWithBadIsolation(repositoryConnection);
             revertChangesOnTable(repositoryConnection);
             demoWithGoodIsolation(repositoryConnection);
             revertChangesOnTable(repositoryConnection);
-        } catch (SQLException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback(savepoint);
-                } catch (SQLException ex) {
-                    throw new IllegalStateException(ex);
-                }
-            }
+        } catch (Exception e) {
+            revertChangesOnTable(repositoryConnection);
+            throw new IllegalStateException(e);
+        } finally {
+            repositoryConnection.close();
         }
     }
 
