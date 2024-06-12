@@ -13,11 +13,13 @@ import com.gridhub.mappers.ResourceMapper;
 import com.gridhub.mappers.UserInfoMapper;
 import com.gridhub.models.Resource;
 import com.gridhub.services.AuthorizationService;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
 
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
+@Controller
 public class AuthorizationController {
     public static final String ACCESS_FORBIDDEN = "Access Forbidden";
     public static final String ACCESS_TO_RESOURCE_GRANTED = "Access to resource granted";
@@ -26,7 +28,8 @@ public class AuthorizationController {
     public static final String METHOD_NOT_ALLOWED = "Method Not Allowed";
     public static final String RESOURCE_WAS_SUCCESSFULLY_UNREGISTERED = "Resource was successfully unregistered";
     public static final String UNKNOWN_ERROR = "Unknown error";
-    private final AuthorizationService authorizationService = AuthorizationService.getInstance();
+
+    private final AuthorizationService authorizationService;
 
     public HttpResponse hasPermissionToAccessResource(ResourceAccessDTO resourceAccessDTO) {
         ResourceInfo resourceInfo = ResourceMapper.INSTANCE.mapToResourceInfo(resourceAccessDTO);

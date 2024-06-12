@@ -1,4 +1,4 @@
-package com.gridhub.repositories.dao;
+package com.gridhub.repository.dao;
 
 import com.gridhub.enums.Role;
 import com.gridhub.models.Resource;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RepositoryDAOTest {
-    public static final  Resource TEST_SERVICE = new Resource("testService", "api/test", List.of(Role.ADMIN), 1L);
+    public static final  Resource TEST_SERVICE = new Resource(null, "testService", "api/test", 1L, List.of(Role.ADMIN));
 
     @Mock
     private RepositoryConnection repositoryConnection;

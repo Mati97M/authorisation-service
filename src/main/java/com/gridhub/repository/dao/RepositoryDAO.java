@@ -1,32 +1,22 @@
-package com.gridhub.repositories.dao;
+package com.gridhub.repository.dao;
 
 import com.gridhub.enums.Role;
 import com.gridhub.mappers.databaseMappers.DatabaseMapper;
 import com.gridhub.models.Resource;
-import com.gridhub.repositories.Repository;
-import com.gridhub.utilities.ConnectionProperties;
+import com.gridhub.repository.Repository;
 import com.gridhub.utilities.RepositoryConnection;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.security.InvalidParameterException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@Component("RepositoryDAO")
+@RequiredArgsConstructor
 public class RepositoryDAO implements Repository {
-    private static RepositoryDAO instance;
-    private RepositoryConnection repositoryConnection;
-
-    public static RepositoryDAO getInstance() throws SQLException {
-        if (instance == null) {
-            instance = new RepositoryDAO(new RepositoryConnection(ConnectionProperties.POSTGRES));
-        }
-        return instance;
-    }
+    private final RepositoryConnection repositoryConnection;
 
     public void saveResource(Resource resource) {
         if (resource == null) {

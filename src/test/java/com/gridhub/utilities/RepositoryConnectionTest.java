@@ -60,7 +60,7 @@ class RepositoryConnectionTest {
 
         repositoryConnection.execute(insertSQL, endpointPath, serviceName, userSpecificId);
 
-        when(resourceMapper.apply(any(ResultSet.class))).thenReturn(new Resource(serviceName, endpointPath, null, (long) userSpecificId));
+        when(resourceMapper.apply(any(ResultSet.class))).thenReturn(new Resource(null, serviceName, endpointPath, (long) userSpecificId, null));
         assertNotNull(
                 repositoryConnection.findOne(
                         selectSQL,

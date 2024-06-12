@@ -1,4 +1,4 @@
-package com.gridhub.repositories;
+package com.gridhub.repository;
 
 import com.gridhub.enums.Role;
 import com.gridhub.models.Resource;
