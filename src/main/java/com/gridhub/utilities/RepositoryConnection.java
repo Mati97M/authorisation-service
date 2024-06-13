@@ -14,22 +14,14 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @RequiredArgsConstructor
-@Component("RepositoryConnection")
+@Component
 public class RepositoryConnection implements AutoCloseable {
     private final HikariDataSource dataSource;
-
-    public RepositoryConnection(ConnectionProperties connectionProperties) {
-        dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl(connectionProperties.getUrl());
-        dataSource.setUsername(connectionProperties.getUser());
-        dataSource.setPassword(connectionProperties.getPassword());
-    }
 
     @Override
     public void close() {
         dataSource.close();
     }
-
 
     public void execute(String query, Object... args) {
         try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(query)) {

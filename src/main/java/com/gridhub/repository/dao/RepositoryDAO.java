@@ -55,7 +55,11 @@ public class RepositoryDAO implements Repository {
 
     public Optional<Resource> findResource(String serviceName, String endpointPath) {
         return Optional.ofNullable(repositoryConnection.findOne(
-                "SELECT * FROM resources WHERE serviceName = ? AND endpointPath = ?",
+                "SELECT r.id, r.endpointPath, r.serviceName, r.userSpecificId, rr.role " +
+                        "from resources r " +
+                        "join resources_roles rr " +
+                        "on r.id = rr.resource_id " +
+                        "WHERE serviceName = ? AND endpointPath = ?;",
                 DatabaseMapper.mapToResource(),
                 serviceName,
                 endpointPath)
@@ -64,14 +68,21 @@ public class RepositoryDAO implements Repository {
 
     public List<Resource> findAllResources() {
         return repositoryConnection.findMany(
-                "SELECT * FROM resources r JOIN resources_roles rr ON r.id = rr.resource_id",
+                "SELECT r.id, r.endpointPath, r.serviceName, r.userSpecificId, rr.role " +
+                        "from resources r " +
+                        "join resources_roles rr " +
+                        "on r.id = rr.resource_id",
                 DatabaseMapper.mapToResource()
         );
     }
 
     public List<Resource> findResourceByServiceName(String serviceName) {
         return repositoryConnection.findMany(
-                "SELECT * FROM resources r JOIN resources_roles rr ON r.id = rr.resource_id WHERE r.serviceName = ?",
+                "SELECT r.id, r.endpointPath, r.serviceName, r.userSpecificId, rr.role " +
+                        "from resources r " +
+                        "join resources_roles rr " +
+                        "on r.id = rr.resource_id " +
+                        "WHERE serviceName = ?",
                 DatabaseMapper.mapToResource(),
                 serviceName
         );

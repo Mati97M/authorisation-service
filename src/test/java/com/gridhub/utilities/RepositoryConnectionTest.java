@@ -1,15 +1,15 @@
 package com.gridhub.utilities;
 
 import com.gridhub.models.Resource;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.function.Function;
 
@@ -24,15 +24,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@RequiredArgsConstructor
+@SpringBootTest
 class RepositoryConnectionTest {
+    private final ApplicationContext applicationContext;
     private static RepositoryConnection repositoryConnection;
     @Mock
     private static Function<ResultSet, Resource> resourceMapper;
 
     @BeforeEach
-    void setUpTest() throws SQLException {
-        repositoryConnection = new RepositoryConnection(ConnectionProperties.H2);
+    void setUpTest() {
+        repositoryConnection = applicationContext.getBean(RepositoryConnection.class);
     }
 
     @AfterEach

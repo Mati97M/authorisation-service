@@ -39,4 +39,10 @@ public class Resource {
     @CollectionTable(name = "resources_roles", joinColumns = @JoinColumn(name = "resource_id"))
     @Column(name = "role")
     private List<Role> roles;
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
 }

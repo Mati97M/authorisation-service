@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS resources_roles (
     ON DELETE CASCADE
 );
 
-INSERT INTO resources (id, endpointPath, serviceName, userSpecificId) VALUES
+INSERT INTO resources (endpointPath, serviceName, userSpecificId) VALUES
     ('/api/authorisation/resources', 'Authorisation Microservice', NULL),
     ('/api/blog/post', 'Blog Microservice', NULL),
     ('/api/blog/tag', 'Blog Microservice', NULL),
