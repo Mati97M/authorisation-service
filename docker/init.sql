@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS resources_roles (
     ON DELETE CASCADE
 );
 
-INSERT INTO resources (id, endpointPath, serviceName, userSpecificId) VALUES
+INSERT INTO resources (endpointPath, serviceName, userSpecificId) VALUES
     ('/api/authorisation/resources', 'Authorisation Microservice', NULL),
     ('/api/blog/post', 'Blog Microservice', NULL),
     ('/api/blog/tag', 'Blog Microservice', NULL),
@@ -48,27 +48,27 @@ INSERT INTO roles VALUES
     ('NOT_RESTRICTED');
 
 INSERT INTO resources_roles VALUES
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/authorisation/resources' AND serviceName = 'Authorisation Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/authorisation/resources' AND serviceName = 'Authorisation Microservice'), 'BUYER'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/authorisation/resources' AND serviceName = 'Authorisation Microservice'), 'LOGGED_USER'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/authorisation/resources' AND serviceName = 'Authorisation Microservice'), 'USER_SPECIFIC'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/authorisation/resources' AND serviceName = 'Authorisation Microservice'), 'NOT_RESTRICTED'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/blog/post' AND serviceName = 'Blog Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/blog/tag' AND serviceName = 'Blog Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/discount' AND serviceName = 'Price Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/discount/associate/product' AND serviceName = 'Price Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/discount/associate/user' AND serviceName = 'Price Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/discount/associate/user' AND serviceName = 'Price Microservice'), 'USER_SPECIFIC'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/order' AND serviceName = 'Order Service'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/order' AND serviceName = 'Order Service'), 'USER_SPECIFIC'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/products' AND serviceName = 'Product Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/products/variant/' AND serviceName = 'Product Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/products/media' AND serviceName = 'Product Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/notification/confirmEmail' AND serviceName = 'Notification Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/notification/deletedAccount' AND serviceName = 'Notification Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/notification/resetPassword' AND serviceName = 'Notification Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/notification/parcelReadyToPickup' AND serviceName = 'Notification Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/notification/productsAvailable' AND serviceName = 'Notification Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/notification/productsAmountIsLow' AND serviceName = 'Notification Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/notification/newBlogPosted' AND serviceName = 'Notification Microservice'), 'ADMIN'),
-    ((SELECT id resources FROM resources WHERE endpointPath = '/api/notification/unhandledException' AND serviceName = 'Notification Microservice'), 'ADMIN');
+    (1, 'ADMIN'),
+    (1, 'BUYER'),
+    (1, 'LOGGED_USER'),
+    (1, 'USER_SPECIFIC'),
+    (1, 'NOT_RESTRICTED'),
+    (2, 'ADMIN'),
+    (3, 'ADMIN'),
+    (4, 'ADMIN'),
+    (5, 'ADMIN'),
+    (6, 'ADMIN'),
+    (6, 'USER_SPECIFIC'),
+    (7, 'ADMIN'),
+    (7, 'USER_SPECIFIC'),
+    (8, 'ADMIN'),
+    (9, 'ADMIN'),
+    (10, 'ADMIN'),
+    (11, 'ADMIN'),
+    (12, 'ADMIN'),
+    (13, 'ADMIN'),
+    (14, 'ADMIN'),
+    (15, 'ADMIN'),
+    (16, 'ADMIN'),
+    (17, 'ADMIN'),
+    (18, 'ADMIN');

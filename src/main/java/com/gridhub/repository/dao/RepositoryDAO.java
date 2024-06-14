@@ -1,32 +1,22 @@
-package com.gridhub.repositories.dao;
+package com.gridhub.repository.dao;
 
 import com.gridhub.enums.Role;
 import com.gridhub.mappers.databaseMappers.DatabaseMapper;
 import com.gridhub.models.Resource;
-import com.gridhub.repositories.Repository;
-import com.gridhub.utilities.ConnectionProperties;
+import com.gridhub.repository.Repository;
 import com.gridhub.utilities.RepositoryConnection;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.security.InvalidParameterException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@Component("RepositoryDAO")
+@RequiredArgsConstructor
 public class RepositoryDAO implements Repository {
-    private static RepositoryDAO instance;
-    private RepositoryConnection repositoryConnection;
-
-    public static RepositoryDAO getInstance() throws SQLException {
-        if (instance == null) {
-            instance = new RepositoryDAO(new RepositoryConnection(ConnectionProperties.POSTGRES));
-        }
-        return instance;
-    }
+    private final RepositoryConnection repositoryConnection;
 
     public void saveResource(Resource resource) {
         if (resource == null) {
@@ -65,7 +55,11 @@ public class RepositoryDAO implements Repository {
 
     public Optional<Resource> findResource(String serviceName, String endpointPath) {
         return Optional.ofNullable(repositoryConnection.findOne(
-                "SELECT * FROM resources WHERE serviceName = ? AND endpointPath = ?",
+                "SELECT r.id, r.endpointPath, r.serviceName, r.userSpecificId, rr.role " +
+                        "from resources r " +
+                        "join resources_roles rr " +
+                        "on r.id = rr.resource_id " +
+                        "WHERE serviceName = ? AND endpointPath = ?;",
                 DatabaseMapper.mapToResource(),
                 serviceName,
                 endpointPath)
@@ -74,14 +68,21 @@ public class RepositoryDAO implements Repository {
 
     public List<Resource> findAllResources() {
         return repositoryConnection.findMany(
-                "SELECT * FROM resources r JOIN resources_roles rr ON r.id = rr.resource_id",
+                "SELECT r.id, r.endpointPath, r.serviceName, r.userSpecificId, rr.role " +
+                        "from resources r " +
+                        "join resources_roles rr " +
+                        "on r.id = rr.resource_id",
                 DatabaseMapper.mapToResource()
         );
     }
 
     public List<Resource> findResourceByServiceName(String serviceName) {
         return repositoryConnection.findMany(
-                "SELECT * FROM resources r JOIN resources_roles rr ON r.id = rr.resource_id WHERE r.serviceName = ?",
+                "SELECT r.id, r.endpointPath, r.serviceName, r.userSpecificId, rr.role " +
+                        "from resources r " +
+                        "join resources_roles rr " +
+                        "on r.id = rr.resource_id " +
+                        "WHERE serviceName = ?",
                 DatabaseMapper.mapToResource(),
                 serviceName
         );

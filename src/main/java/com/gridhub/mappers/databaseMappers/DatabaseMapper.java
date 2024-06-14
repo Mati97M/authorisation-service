@@ -38,10 +38,11 @@ public class DatabaseMapper {
             } catch (SQLException e) {
                 throw new DatabaseMapperIllegalStateException();
             }
-            return new Resource(serviceName,
+            return new Resource(null,
+                    serviceName,
                     endpointPath,
-                    new ArrayList<>(roles),
-                    userSpecificId);
+                    userSpecificId,
+                    new ArrayList<>(roles));
         };
     }
 

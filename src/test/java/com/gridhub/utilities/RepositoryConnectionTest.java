@@ -1,15 +1,13 @@
 package com.gridhub.utilities;
 
 import com.gridhub.models.Resource;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.function.Function;
 
@@ -24,16 +22,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@RequiredArgsConstructor
+@SpringBootTest
 class RepositoryConnectionTest {
-    private static RepositoryConnection repositoryConnection;
+    private final RepositoryConnection repositoryConnection;
     @Mock
     private static Function<ResultSet, Resource> resourceMapper;
-
-    @BeforeEach
-    void setUpTest() throws SQLException {
-        repositoryConnection = new RepositoryConnection(ConnectionProperties.H2);
-    }
 
     @AfterEach
     void tearDownTest() {
@@ -60,7 +54,7 @@ class RepositoryConnectionTest {
 
         repositoryConnection.execute(insertSQL, endpointPath, serviceName, userSpecificId);
 
-        when(resourceMapper.apply(any(ResultSet.class))).thenReturn(new Resource(serviceName, endpointPath, null, (long) userSpecificId));
+        when(resourceMapper.apply(any(ResultSet.class))).thenReturn(new Resource(null, serviceName, endpointPath, (long) userSpecificId, null));
         assertNotNull(
                 repositoryConnection.findOne(
                         selectSQL,

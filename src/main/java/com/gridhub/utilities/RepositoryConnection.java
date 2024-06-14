@@ -2,6 +2,8 @@ package com.gridhub.utilities;
 
 import com.gridhub.exceptions.RepositoryIllegalStateException;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,21 +13,15 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@RequiredArgsConstructor
+@Component
 public class RepositoryConnection implements AutoCloseable {
     private final HikariDataSource dataSource;
-
-    public RepositoryConnection(ConnectionProperties connectionProperties) {
-        dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl(connectionProperties.getUrl());
-        dataSource.setUsername(connectionProperties.getUser());
-        dataSource.setPassword(connectionProperties.getPassword());
-    }
 
     @Override
     public void close() {
         dataSource.close();
     }
-
 
     public void execute(String query, Object... args) {
         try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(query)) {
