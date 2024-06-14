@@ -3,11 +3,9 @@ package com.gridhub.utilities;
 import com.gridhub.models.Resource;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 
 import java.sql.ResultSet;
 import java.util.List;
@@ -27,15 +25,9 @@ import static org.mockito.Mockito.when;
 @RequiredArgsConstructor
 @SpringBootTest
 class RepositoryConnectionTest {
-    private final ApplicationContext applicationContext;
-    private static RepositoryConnection repositoryConnection;
+    private final RepositoryConnection repositoryConnection;
     @Mock
     private static Function<ResultSet, Resource> resourceMapper;
-
-    @BeforeEach
-    void setUpTest() {
-        repositoryConnection = applicationContext.getBean(RepositoryConnection.class);
-    }
 
     @AfterEach
     void tearDownTest() {

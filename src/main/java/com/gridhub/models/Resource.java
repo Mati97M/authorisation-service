@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -43,7 +42,8 @@ public class Resource {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Resource resource = (Resource) o;
-        return Objects.equals(id, resource.id);
+        return this.serviceName.equals(resource.serviceName)
+                && this.endpointPath.equals(resource.endpointPath);
     }
 
     @Override
