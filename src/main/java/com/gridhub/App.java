@@ -1,16 +1,18 @@
 package com.gridhub;
 
-import contextConfig.DashPropertiesSupplier;
+import contextConfig.DateSupplier;
 import contextConfig.ProdConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-import java.util.Arrays;
+import java.util.Date;
 
+@EnableConfigurationProperties
 @ConfigurationPropertiesScan("contextConfig")
 @ComponentScan("contextConfig")
 @Slf4j
@@ -22,7 +24,10 @@ public class App {
         ProdConfig prodConfig = applicationContext.getBean(ProdConfig.class);
         log.info(prodConfig.toString());
 
-        DashPropertiesSupplier dashPropertiesSupplier = applicationContext.getBean(DashPropertiesSupplier.class);
-        log.info(Arrays.toString(dashPropertiesSupplier.get()));
+//        DashPropertiesSupplier dashPropertiesSupplier = applicationContext.getBean(DashPropertiesSupplier.class);
+//        log.info(Arrays.toString(dashPropertiesSupplier.get()));
+
+        Date date = applicationContext.getBean(DateSupplier.class).get();
+        log.info(date.toString());
     }
 }
