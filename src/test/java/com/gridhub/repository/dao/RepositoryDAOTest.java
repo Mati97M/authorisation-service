@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -20,9 +20,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
 class RepositoryDAOTest {
-    public static final  Resource TEST_SERVICE = new Resource(null, "testService", "api/test", 1L, List.of(Role.ADMIN));
+    public static final Resource TEST_SERVICE = new Resource(null, "testService", "api/test", 1L, List.of(Role.ADMIN));
 
     @Mock
     private RepositoryConnection repositoryConnection;
@@ -32,7 +32,7 @@ class RepositoryDAOTest {
     @Test
     void saveResourceWillDoNothingIfResourceIsNullTest() {
         repositoryDAO.saveResource(null);
-        verify(repositoryConnection, never()).findOne(anyString(),any(),any());
+        verify(repositoryConnection, never()).findOne(anyString(), any(), any());
     }
 
     @Test
@@ -110,10 +110,9 @@ class RepositoryDAOTest {
                 eq(TEST_SERVICE.getServiceName()),
                 eq(TEST_SERVICE.getEndpointPath())
         )).thenReturn(null);
+        verifyNoMoreInteractions(repositoryConnection);
 
         repositoryDAO.updateResource(TEST_SERVICE);
-
-        verifyNoMoreInteractions(repositoryConnection);
     }
 
     @Test

@@ -1,7 +1,7 @@
 package rdbmsTasks;
 
-import com.gridhub.utilities.ConnectionProperties;
 import com.gridhub.utilities.RepositoryConnection;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
@@ -15,17 +15,17 @@ public class TransactionDemo {
         RepositoryConnection repositoryConnection = null;
         Connection connection = null;
         try {
-            repositoryConnection = new RepositoryConnection(ConnectionProperties.POSTGRES);
+            repositoryConnection = new RepositoryConnection(new HikariDataSource());
             connection = repositoryConnection.getConnection();
 
             log.info("demoWithTransactions");
             demoWithTransactions(connection);
-            if(!logDbState(connection)) {
+            if (!logDbState(connection)) {
                 revertChanges(connection);
             }
             log.info("demoNoTransactions");
             demoNoTransactions(connection);
-            if(!logDbState(connection)) {
+            if (!logDbState(connection)) {
                 revertChanges(connection);
             }
         } catch (SQLException e) {
@@ -47,7 +47,7 @@ public class TransactionDemo {
 
     private static void revertChanges(Connection connection) throws SQLException {
         try (Statement statement = connection.createStatement()) {
-             statement.execute("DELETE FROM resources WHERE endpointPath = '/api/test' AND serviceName = 'Test Microservice';");
+            statement.execute("DELETE FROM resources WHERE endpointPath = '/api/test' AND serviceName = 'Test Microservice';");
         }
     }
 
