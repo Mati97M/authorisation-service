@@ -8,9 +8,10 @@ import com.gridhub.http.HttpResponse;
 import com.gridhub.utilities.AuthorizationMessages;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@SpringBootTest
 @SpringJUnitConfig(AuthorizationIntegrationTest.TestConfiguration.class)
 class AuthorizationIntegrationTest {
     @Autowired
@@ -31,7 +31,9 @@ class AuthorizationIntegrationTest {
     private final AuthorizationMessages authorizationMessages;
 
     @Configuration
+    @TestPropertySource(locations = "application.properties")
     @ComponentScan(basePackages = "com.gridhub")
+    @ConfigurationPropertiesScan
     static class TestConfiguration {}
 
     @Test
