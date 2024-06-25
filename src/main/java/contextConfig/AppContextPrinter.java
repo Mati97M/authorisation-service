@@ -25,14 +25,14 @@ public class AppContextPrinter implements CommandLineRunner {
     private void printContext() {
         environment.getPropertySources()
                 .stream()
-                .filter(ps -> ps instanceof MapPropertySource)
+                .filter(MapPropertySource.class::isInstance)
                 .map(ps -> ((MapPropertySource) ps).getSource().keySet())
                 .flatMap(Collection::stream)
                 .distinct()
                 .sorted()
                 .forEach(key -> log.info("{}={}", key, environment.getProperty(key)));
         for (String beanName : applicationContext.getBeanDefinitionNames()) {
-            log.info("beanName = " + beanName);
+            log.info("beanName = {} ", beanName);
         }
     }
 }
