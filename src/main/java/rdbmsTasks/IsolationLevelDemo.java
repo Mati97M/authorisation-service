@@ -1,7 +1,7 @@
 package rdbmsTasks;
 
-import com.gridhub.utilities.ConnectionProperties;
 import com.gridhub.utilities.RepositoryConnection;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import java.sql.SQLException;
 @Slf4j
 public class IsolationLevelDemo {
     public static void main(String[] args) {
-        RepositoryConnection repositoryConnection = new RepositoryConnection(ConnectionProperties.POSTGRES);
+        RepositoryConnection repositoryConnection = new RepositoryConnection(new HikariDataSource());
         try {
             demoWithBadIsolation(repositoryConnection);
             revertChangesOnTable(repositoryConnection);

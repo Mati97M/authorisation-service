@@ -1,7 +1,7 @@
 package rdbmsTasks;
 
-import com.gridhub.utilities.ConnectionProperties;
 import com.gridhub.utilities.RepositoryConnection;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ public class TransactionDemo {
         RepositoryConnection repositoryConnection = null;
         Connection connection = null;
         try {
-            repositoryConnection = new RepositoryConnection(ConnectionProperties.POSTGRES);
+            repositoryConnection = new RepositoryConnection(new HikariDataSource());
             connection = repositoryConnection.getConnection();
 
             log.info("demoWithTransactions");
