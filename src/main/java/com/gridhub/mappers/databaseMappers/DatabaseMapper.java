@@ -24,9 +24,9 @@ public class DatabaseMapper {
 
             try {
                 id = resultSet.getLong("id");
-                serviceName = resultSet.getString("serviceName");
-                endpointPath = resultSet.getString("endpointPath");
-                userSpecificId = resultSet.getLong("userSpecificId");
+                serviceName = resultSet.getString("service_name");
+                endpointPath = resultSet.getString("endpoint_path");
+                userSpecificId = resultSet.getLong("user_specific_id");
                 roles = new HashSet<>();
                 do {
                     if (resultSet.getLong("id") != id) {

@@ -31,7 +31,7 @@ public class RepositoryConnection implements AutoCloseable {
             }
             preparedStatement.execute();
         } catch (SQLException e) {
-            throw new RepositoryIllegalStateException();
+            throw new RepositoryIllegalStateException(e);
         }
     }
 
@@ -40,7 +40,7 @@ public class RepositoryConnection implements AutoCloseable {
             consumer.accept(preparedStatement);
             preparedStatement.execute();
         } catch (SQLException e) {
-            throw new RepositoryIllegalStateException();
+            throw new RepositoryIllegalStateException(e);
         }
     }
 
@@ -62,7 +62,7 @@ public class RepositoryConnection implements AutoCloseable {
                 return result;
             }
         } catch (SQLException e) {
-            throw new RepositoryIllegalStateException();
+            throw new RepositoryIllegalStateException(e);
         }
     }
 
@@ -79,7 +79,7 @@ public class RepositoryConnection implements AutoCloseable {
                 }
             }
         } catch (SQLException e) {
-            throw new RepositoryIllegalStateException();
+            throw new RepositoryIllegalStateException(e);
         }
         return results;
     }

@@ -8,10 +8,10 @@ import com.gridhub.http.HttpResponse;
 import com.gridhub.utilities.AuthorizationMessages;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.List;
@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringJUnitConfig(AuthorizationIntegrationTest.TestConfiguration.class)
+@TestPropertySource("classpath:application.properties")
 class AuthorizationIntegrationTest {
     @Autowired
     public AuthorizationIntegrationTest(AuthorizationMessages authorizationMessages, AuthorizationController authorizationController) {
@@ -31,11 +32,17 @@ class AuthorizationIntegrationTest {
     private final AuthorizationMessages authorizationMessages;
 
     @Configuration
-    @TestPropertySource(locations = "application.properties")
     @ComponentScan(basePackages = "com.gridhub")
-    @ConfigurationPropertiesScan
     static class TestConfiguration {}
 
+//    @BeforeAll
+//    @Sql(scripts = "classpath:com/grid")
+//    public static void setUpIT() {}
+//
+//    @BeforeEach
+//    void setUpEachIT() {}
+
+    @Sql(scripts = "classpath:init.sql")
     @Test
     void hasPermissionToAccessResourceGrantsAccessToResourceIfTheRequestIsValidIT() {
         String endpointPath = "/api/authorisation/resources";
@@ -52,9 +59,10 @@ class AuthorizationIntegrationTest {
         assertEquals(endpointPath, httpResponse.resourcePath());
     }
 
+    @Sql(scripts = "classpath:init.sql")
     @Test
     void hasPermissionToAccessResourceReturns403ResponseIfTheRoleDoesNotMatchIT() {
-        String endpointPath = "/api/blog/pos";
+        String endpointPath = "/api/blog/post";
         ResourceAccessDTO request = new ResourceAccessDTO(
                 "Blog Microservice",
                 endpointPath,
@@ -68,6 +76,7 @@ class AuthorizationIntegrationTest {
         assertNull(httpResponse.resourcePath());
     }
 
+    @Sql(scripts = "classpath:init.sql")
     @Test
     void hasPermissionToAccessResourceReturns404ResponseIfTheRequestedServiceDoesNotExistIT() {
         String endpointPath = "/api/missing";
@@ -84,15 +93,16 @@ class AuthorizationIntegrationTest {
         assertNull(httpResponse.resourcePath());
     }
 
+    @Sql(scripts = "classpath:init.sql")
     @Test
-    void registerResourceITRetunrs200ResponseIfRequestIsValidIT() {
+    void registerResourceReturns200ResponseIfRequestIsValidIT() {
         String endpointPath = "api/test";
         ResourceRegistrationDTO resourceRegistrationDTO = new ResourceRegistrationDTO(
                 "Test Service",
                 endpointPath,
                 List.of(Role.ADMIN, Role.USER_SPECIFIC),
                 15L,
-                Role.LOGGED_USER
+                Role.ADMIN
         );
         HttpResponse httpResponse = authorizationController.registerResource(resourceRegistrationDTO);
 
@@ -101,15 +111,16 @@ class AuthorizationIntegrationTest {
         assertEquals(endpointPath, httpResponse.resourcePath());
     }
 
+    @Sql(scripts = "classpath:init.sql")
     @Test
-    void registerResourceITReturns405ResponseIfTheRequestedResourceAlreadyExistsIT() {
+    void registerResourceReturns405ResponseIfTheRequestedResourceAlreadyExistsIT() {
         String endpointPath = "/api/authorisation/resources";
         ResourceRegistrationDTO resourceRegistrationDTO = new ResourceRegistrationDTO(
                 "Authorisation Microservice",
                 endpointPath,
                 List.of(Role.ADMIN, Role.USER_SPECIFIC),
                 15L,
-                Role.LOGGED_USER
+                Role.ADMIN
         );
         HttpResponse httpResponse = authorizationController.registerResource(resourceRegistrationDTO);
 
@@ -118,8 +129,9 @@ class AuthorizationIntegrationTest {
         assertEquals(endpointPath, httpResponse.resourcePath());
     }
 
+    @Sql(scripts = "classpath:init.sql")
     @Test
-    void registerResourceITReturns403ResponseIfAccessIsForbiddenIT() {
+    void registerResourceReturns403ResponseIfAccessIsForbiddenIT() {
         String endpointPath = "/api/test";
         ResourceRegistrationDTO resourceRegistrationDTO = new ResourceRegistrationDTO(
                 "Test Service",
@@ -135,6 +147,7 @@ class AuthorizationIntegrationTest {
         assertEquals(endpointPath, httpResponse.resourcePath());
     }
 
+    @Sql(scripts = "classpath:init.sql")
     @Test
     void unregisterResourceReturns200ResponseIfRequestIsValidIT() {
         String endpointPath = "/api/blog/post";
@@ -151,6 +164,7 @@ class AuthorizationIntegrationTest {
         assertEquals(endpointPath, httpResponse.resourcePath());
     }
 
+    @Sql(scripts = "classpath:init.sql")
     @Test
     void unregisterResourceReturns200ResponseIfReturns404ResponseIfTheRequestedServiceDoesNotExistIT() {
         String endpointPath = "/api/test";
@@ -167,6 +181,7 @@ class AuthorizationIntegrationTest {
         assertNull(httpResponse.resourcePath());
     }
 
+    @Sql(scripts = "classpath:init.sql")
     @Test
     void unregisterResourceReturnsReturns403ResponseIfAccessIsForbiddenIT() {
         String endpointPath = "/api/test";
