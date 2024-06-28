@@ -13,6 +13,7 @@ import com.gridhub.mappers.ResourceMapper;
 import com.gridhub.mappers.UserInfoMapper;
 import com.gridhub.models.Resource;
 import com.gridhub.services.AuthorizationService;
+import com.gridhub.utilities.AuthorizationMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -21,14 +22,7 @@ import org.springframework.stereotype.Controller;
 @Slf4j
 @Controller
 public class AuthorizationController {
-    public static final String ACCESS_FORBIDDEN = "Access Forbidden";
-    public static final String ACCESS_TO_RESOURCE_GRANTED = "Access to resource granted";
-    public static final String RESOURCE_NOT_FOUND = "Resource not found";
-    public static final String RESOURCE_WAS_SUCCESSFULLY_REGISTERED = "Resource was successfully registered";
-    public static final String METHOD_NOT_ALLOWED = "Method Not Allowed";
-    public static final String RESOURCE_WAS_SUCCESSFULLY_UNREGISTERED = "Resource was successfully unregistered";
-    public static final String UNKNOWN_ERROR = "Unknown error";
-
+    private final AuthorizationMessages authorizationMessages;
     private final AuthorizationService authorizationService;
 
     public HttpResponse hasPermissionToAccessResource(ResourceAccessDTO resourceAccessDTO) {
@@ -43,20 +37,20 @@ public class AuthorizationController {
             hasPermission = authorizationService.hasPermissionToAccessResource(userInfo, resourceInfo);
             if (hasPermission) {
                 statusCode = 200;
-                body = ACCESS_TO_RESOURCE_GRANTED;
+                body = authorizationMessages.accessToResourceGranted();
                 endpointPath = resourceInfo.endpointPath();
             } else {
                 statusCode = 403;
-                body = ACCESS_FORBIDDEN;
+                body = authorizationMessages.accessForbidden();
             }
         } catch (EntityNotFoundException e) {
             statusCode = 404;
-            body = RESOURCE_NOT_FOUND;
-            log.error(RESOURCE_NOT_FOUND.concat(": %s").formatted(resourceInfo.serviceName()), e);
+            body = authorizationMessages.resourceNotFound();
+            log.error(authorizationMessages.resourceNotFound().concat(": %s").formatted(resourceInfo.serviceName()), e);
         } catch (Exception e) {
             statusCode = 500;
-            body = UNKNOWN_ERROR;
-            log.error(UNKNOWN_ERROR.concat(": %s").formatted(e.getMessage()), e);
+            body = authorizationMessages.unknownError();
+            log.error(authorizationMessages.unknownError().concat(": %s").formatted(e.getMessage()), e);
         }
         return new HttpResponse(statusCode, body, endpointPath);
     }
@@ -70,19 +64,19 @@ public class AuthorizationController {
         try {
             authorizationService.registerResource(userInfo, resource);
             statusCode = 200;
-            body = RESOURCE_WAS_SUCCESSFULLY_REGISTERED;
+            body = authorizationMessages.resourceWasSuccessfullyRegistered();
         } catch (EndpointPathDuplicatException e) {
             statusCode = 405;
-            body = METHOD_NOT_ALLOWED;
-            log.error(METHOD_NOT_ALLOWED.concat(": %s").formatted("registerResource"), e);
+            body = authorizationMessages.methodNotAllowed();
+            log.error(body.concat(": %s").formatted("registerResource"), e);
         } catch (ForbiddenAccessException e) {
             statusCode = 403;
-            body = ACCESS_FORBIDDEN;
-            log.error(ACCESS_FORBIDDEN.concat(": %s").formatted(resource.getServiceName()), e);
+            body = authorizationMessages.accessForbidden();
+            log.error(body.concat(": %s").formatted(resource.getServiceName()), e);
         } catch (Exception e) {
             statusCode = 500;
-            body = UNKNOWN_ERROR;
-            log.error(UNKNOWN_ERROR.concat(": %s").formatted(e.getMessage()), e);
+            body = authorizationMessages.unknownError();
+            log.error(body.concat(": %s").formatted(e.getMessage()), e);
         }
         return new HttpResponse(statusCode, body, resourceRegistrationDTO.endpointPath());
     }
@@ -97,20 +91,20 @@ public class AuthorizationController {
         try {
             authorizationService.unregisterResource(userInfo, resourceInfo);
             statusCode = 200;
-            body = RESOURCE_WAS_SUCCESSFULLY_UNREGISTERED;
+            body = authorizationMessages.resourceWasSuccessfullyUnregistered();
             endpointPath = resourceDeregistrationDTO.endpointPath();
         } catch (EntityNotFoundException e) {
             statusCode = 404;
-            body = RESOURCE_NOT_FOUND;
-            log.error(RESOURCE_NOT_FOUND.concat(": %s").formatted(resourceInfo.serviceName()), e);
+            body = authorizationMessages.resourceNotFound();
+            log.error(body.concat(": %s").formatted(resourceInfo.serviceName()), e);
         } catch (ForbiddenAccessException e) {
             statusCode = 403;
-            body = ACCESS_FORBIDDEN;
-            log.error(ACCESS_FORBIDDEN.concat(": %s").formatted(resourceInfo.serviceName()), e);
+            body = authorizationMessages.accessForbidden();
+            log.error(body.concat(": %s").formatted(resourceInfo.serviceName()), e);
         } catch (Exception e) {
             statusCode = 500;
-            body = UNKNOWN_ERROR;
-            log.error(UNKNOWN_ERROR.concat(": %s").formatted(e.getMessage()), e);
+            body = authorizationMessages.unknownError();
+            log.error(body.concat(": %s").formatted(e.getMessage()), e);
         }
         return new HttpResponse(statusCode, body, endpointPath);
     }

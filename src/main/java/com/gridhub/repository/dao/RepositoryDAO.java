@@ -23,7 +23,7 @@ public class RepositoryDAO implements Repository {
             return;
         }
         Resource foundResource = repositoryConnection.findOne(
-                "SELECT * FROM resources WHERE endpointPath = ? AND serviceName = ?",
+                "SELECT * FROM resources WHERE endpoint_path = ? AND service_name = ?",
                 DatabaseMapper.mapToResource(),
                 resource.getEndpointPath(),
                 resource.getServiceName()
@@ -32,15 +32,15 @@ public class RepositoryDAO implements Repository {
             return;
         }
         repositoryConnection.execute(
-                "INSERT INTO resources VALUES ?, ?, ?",
+                "INSERT INTO resources (user_specific_id, endpoint_path, service_name) VALUES (?, ?, ?)",
+                resource.getUserSpecificId(),
                 resource.getEndpointPath(),
-                resource.getServiceName(),
-                resource.getUserSpecificId()
+                resource.getServiceName()
         );
     }
 
     public void deleteResource(String serviceName, String endpointPath) {
-        String deleteSQL = "DELETE FROM resources WHERE serviceName = ? AND endpointPath = ?";
+        String deleteSQL = "DELETE FROM resources WHERE service_name = ? AND endpoint_path = ?";
         repositoryConnection.execute(
                 deleteSQL,
                 preparedStatement -> {
@@ -55,11 +55,11 @@ public class RepositoryDAO implements Repository {
 
     public Optional<Resource> findResource(String serviceName, String endpointPath) {
         return Optional.ofNullable(repositoryConnection.findOne(
-                "SELECT r.id, r.endpointPath, r.serviceName, r.userSpecificId, rr.role " +
+                "SELECT r.id, r.endpoint_path, r.service_name, r.user_specific_id, rr.role " +
                         "from resources r " +
                         "join resources_roles rr " +
                         "on r.id = rr.resource_id " +
-                        "WHERE serviceName = ? AND endpointPath = ?;",
+                        "WHERE service_name = ? AND endpoint_path = ?;",
                 DatabaseMapper.mapToResource(),
                 serviceName,
                 endpointPath)
@@ -68,7 +68,7 @@ public class RepositoryDAO implements Repository {
 
     public List<Resource> findAllResources() {
         return repositoryConnection.findMany(
-                "SELECT r.id, r.endpointPath, r.serviceName, r.userSpecificId, rr.role " +
+                "SELECT r.id, r.endpoint_path, r.service_name, r.user_specific_id, rr.role " +
                         "from resources r " +
                         "join resources_roles rr " +
                         "on r.id = rr.resource_id",
@@ -78,11 +78,11 @@ public class RepositoryDAO implements Repository {
 
     public List<Resource> findResourceByServiceName(String serviceName) {
         return repositoryConnection.findMany(
-                "SELECT r.id, r.endpointPath, r.serviceName, r.userSpecificId, rr.role " +
+                "SELECT r.id, r.endpoint_path, r.service_name, r.user_specific_id, rr.role " +
                         "from resources r " +
                         "join resources_roles rr " +
                         "on r.id = rr.resource_id " +
-                        "WHERE serviceName = ?",
+                        "WHERE service_name = ?",
                 DatabaseMapper.mapToResource(),
                 serviceName
         );
@@ -93,7 +93,7 @@ public class RepositoryDAO implements Repository {
         String endpointPath = resource.getEndpointPath();
         Long userSpecificId = resource.getUserSpecificId();
         Resource existingResource = repositoryConnection.findOne(
-                "SELECT * FROM resources WHERE serviceName = ? AND endpointPath = ?",
+                "SELECT * FROM resources WHERE service_name = ? AND endpoint_path = ?",
                 DatabaseMapper.mapToResource(),
                 serviceName,
                 endpointPath
@@ -101,7 +101,7 @@ public class RepositoryDAO implements Repository {
         if (existingResource == null) {
             return;
         }
-        repositoryConnection.execute("UPDATE resources SET userSpecificId = ? WHERE serviceName = ? AND endpointPath = ?", userSpecificId, serviceName, endpointPath);
+        repositoryConnection.execute("UPDATE resources SET user_specific_id = ? WHERE service_name = ? AND endpoint_path = ?", userSpecificId, serviceName, endpointPath);
     }
 
     public List<Role> findAllRoles() {

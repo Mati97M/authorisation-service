@@ -20,12 +20,12 @@ public class TransactionDemo {
 
             log.info("demoWithTransactions");
             demoWithTransactions(connection);
-            if(!logDbState(connection)) {
+            if (!logDbState(connection)) {
                 revertChanges(connection);
             }
             log.info("demoNoTransactions");
             demoNoTransactions(connection);
-            if(!logDbState(connection)) {
+            if (!logDbState(connection)) {
                 revertChanges(connection);
             }
         } catch (SQLException e) {
@@ -47,7 +47,7 @@ public class TransactionDemo {
 
     private static void revertChanges(Connection connection) throws SQLException {
         try (Statement statement = connection.createStatement()) {
-             statement.execute("DELETE FROM resources WHERE endpointPath = '/api/test' AND serviceName = 'Test Microservice';");
+            statement.execute("DELETE FROM resources WHERE endpointPath = '/api/test' AND serviceName = 'Test Microservice';");
         }
     }
 
