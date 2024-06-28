@@ -35,13 +35,6 @@ class AuthorizationIntegrationTest {
     @ComponentScan(basePackages = "com.gridhub")
     static class TestConfiguration {}
 
-//    @BeforeAll
-//    @Sql(scripts = "classpath:com/grid")
-//    public static void setUpIT() {}
-//
-//    @BeforeEach
-//    void setUpEachIT() {}
-
     @Sql(scripts = "classpath:init.sql")
     @Test
     void hasPermissionToAccessResourceGrantsAccessToResourceIfTheRequestIsValidIT() {
