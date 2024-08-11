@@ -7,21 +7,21 @@ import com.gridhub.exceptions.EndpointPathDuplicatException;
 import com.gridhub.exceptions.EntityNotFoundException;
 import com.gridhub.exceptions.ForbiddenAccessException;
 import com.gridhub.models.Resource;
-import com.gridhub.repository.Repository;
+import com.gridhub.repository.ResourceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
 public class AuthorizationServiceImpl implements AuthorizationService {
-    private final Repository repository;
+    private final ResourceRepository repository;
 
     public boolean hasPermissionToAccessResource(UserInfo userInfo, ResourceInfo resourceInfo) {
-        Resource requestedResource = repository.findResource(resourceInfo.serviceName(), resourceInfo.endpointPath())
+        Resource requestedResource = repository.findByServiceNameAndEndpointPath(resourceInfo.serviceName(), resourceInfo.endpointPath())
                 .orElseThrow(EntityNotFoundException::new);
-        List<Role> requestedResourceRoles = requestedResource.getRoles();
+        Set<Role> requestedResourceRoles = requestedResource.getRoles();
 
         if (userInfo.role().equals(Role.ADMIN) || requestedResourceRoles.contains(Role.NOT_RESTRICTED)) {
             return true;
@@ -37,12 +37,12 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         if (!userInfo.role().equals(Role.ADMIN)) {
             throw new ForbiddenAccessException();
         } else {
-            repository.findResource(resource.getServiceName(), resource.getEndpointPath())
+            repository.findByServiceNameAndEndpointPath(resource.getServiceName(), resource.getEndpointPath())
                     .ifPresentOrElse(
                             alreadyExistingResource -> {
                                 throw new EndpointPathDuplicatException();
                             },
-                            () -> repository.saveResource(resource)
+                            () -> repository.save(resource)
                     );
         }
     }
@@ -51,9 +51,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         if (!userInfo.role().equals(Role.ADMIN)) {
             throw new ForbiddenAccessException();
         } else {
-            repository.findResource(resourceInfo.serviceName(), resourceInfo.endpointPath())
+            repository.findByServiceNameAndEndpointPath(resourceInfo.serviceName(), resourceInfo.endpointPath())
                     .ifPresentOrElse(
-                            alreadyExistingResource -> repository.deleteResource(resourceInfo.serviceName()),
+                            alreadyExistingResource -> repository.deleteByServiceName(resourceInfo.serviceName()),
                             () -> {
                                 throw new EntityNotFoundException();
                             }
