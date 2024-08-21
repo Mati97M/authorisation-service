@@ -18,7 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -36,8 +36,8 @@ public class Resource {
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "resources_roles", joinColumns = @JoinColumn(name = "resource_id"))
-    @Column(name = "role")
-    private List<Role> roles;
+    @Column(name = "roles")
+    private Set<Role> roles;
 
     @Override
     public boolean equals(Object o) {
