@@ -13,19 +13,24 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "resources")
+@Table(name = "resources", uniqueConstraints = {
+        @UniqueConstraint(name = "unique_service_and_endpointPath", columnNames = { "serviceName", "endpointPath" })
+})
 public class Resource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

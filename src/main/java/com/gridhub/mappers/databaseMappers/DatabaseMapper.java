@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.function.Function;
 
@@ -42,7 +41,7 @@ public class DatabaseMapper {
                     serviceName,
                     endpointPath,
                     userSpecificId,
-                    new ArrayList<>(roles));
+                    new HashSet<>(roles));
         };
     }
 

@@ -1,13 +1,14 @@
-package com.gridhub.controllers;
+package com.gridhub;
 
+import com.gridhub.controllers.AuthorizationController;
 import com.gridhub.dtos.ResourceAccessDTO;
 import com.gridhub.dtos.ResourceDeregistrationDTO;
 import com.gridhub.dtos.ResourceRegistrationDTO;
 import com.gridhub.enums.Role;
 import com.gridhub.http.HttpResponse;
 import com.gridhub.utilities.AuthorizationMessages;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.TestPropertySource;
@@ -19,15 +20,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@SpringJUnitConfig(AuthorizationIntegrationTest.TestConfiguration.class)
+@RequiredArgsConstructor
+@SpringJUnitConfig(AuthorizationIT.TestConfiguration.class)
 @TestPropertySource("classpath:application.properties")
-class AuthorizationIntegrationTest {
-    @Autowired
-    public AuthorizationIntegrationTest(AuthorizationMessages authorizationMessages, AuthorizationController authorizationController) {
-        this.authorizationMessages = authorizationMessages;
-        this.authorizationController = authorizationController;
-    }
-
+class AuthorizationIT {
     private final AuthorizationController authorizationController;
     private final AuthorizationMessages authorizationMessages;
 
