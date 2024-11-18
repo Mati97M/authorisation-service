@@ -7,8 +7,8 @@ import com.gridhub.dtos.ResourceRegistrationDTO;
 import com.gridhub.enums.Role;
 import com.gridhub.http.HttpResponse;
 import com.gridhub.utilities.AuthorizationMessages;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.TestPropertySource;
@@ -20,18 +20,20 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RequiredArgsConstructor
-@SpringJUnitConfig(AuthorizationIT.TestConfiguration.class)
+@SpringJUnitConfig
 @TestPropertySource("classpath:application.properties")
+@Sql(scripts = "classpath:init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 class AuthorizationIT {
-    private final AuthorizationController authorizationController;
-    private final AuthorizationMessages authorizationMessages;
+    @Autowired
+    private AuthorizationController authorizationController;
+    @Autowired
+    private AuthorizationMessages authorizationMessages;
 
     @Configuration
-    @ComponentScan(basePackages = "com.gridhub")
-    static class TestConfiguration {}
+    @ComponentScan
+    static class TestConfiguration {
+    }
 
-    @Sql(scripts = "classpath:init.sql")
     @Test
     void hasPermissionToAccessResourceGrantsAccessToResourceIfTheRequestIsValidIT() {
         String endpointPath = "/api/authorisation/resources";
@@ -48,7 +50,6 @@ class AuthorizationIT {
         assertEquals(endpointPath, httpResponse.resourcePath());
     }
 
-    @Sql(scripts = "classpath:init.sql")
     @Test
     void hasPermissionToAccessResourceReturns403ResponseIfTheRoleDoesNotMatchIT() {
         String endpointPath = "/api/blog/post";
@@ -65,7 +66,6 @@ class AuthorizationIT {
         assertNull(httpResponse.resourcePath());
     }
 
-    @Sql(scripts = "classpath:init.sql")
     @Test
     void hasPermissionToAccessResourceReturns404ResponseIfTheRequestedServiceDoesNotExistIT() {
         String endpointPath = "/api/missing";
@@ -82,7 +82,6 @@ class AuthorizationIT {
         assertNull(httpResponse.resourcePath());
     }
 
-    @Sql(scripts = "classpath:init.sql")
     @Test
     void registerResourceReturns200ResponseIfRequestIsValidIT() {
         String endpointPath = "api/test";
@@ -100,7 +99,6 @@ class AuthorizationIT {
         assertEquals(endpointPath, httpResponse.resourcePath());
     }
 
-    @Sql(scripts = "classpath:init.sql")
     @Test
     void registerResourceReturns405ResponseIfTheRequestedResourceAlreadyExistsIT() {
         String endpointPath = "/api/authorisation/resources";
@@ -118,7 +116,6 @@ class AuthorizationIT {
         assertEquals(endpointPath, httpResponse.resourcePath());
     }
 
-    @Sql(scripts = "classpath:init.sql")
     @Test
     void registerResourceReturns403ResponseIfAccessIsForbiddenIT() {
         String endpointPath = "/api/test";
@@ -136,7 +133,6 @@ class AuthorizationIT {
         assertEquals(endpointPath, httpResponse.resourcePath());
     }
 
-    @Sql(scripts = "classpath:init.sql")
     @Test
     void unregisterResourceReturns200ResponseIfRequestIsValidIT() {
         String endpointPath = "/api/blog/post";
@@ -153,7 +149,6 @@ class AuthorizationIT {
         assertEquals(endpointPath, httpResponse.resourcePath());
     }
 
-    @Sql(scripts = "classpath:init.sql")
     @Test
     void unregisterResourceReturns200ResponseIfReturns404ResponseIfTheRequestedServiceDoesNotExistIT() {
         String endpointPath = "/api/test";
@@ -170,7 +165,6 @@ class AuthorizationIT {
         assertNull(httpResponse.resourcePath());
     }
 
-    @Sql(scripts = "classpath:init.sql")
     @Test
     void unregisterResourceReturnsReturns403ResponseIfAccessIsForbiddenIT() {
         String endpointPath = "/api/test";

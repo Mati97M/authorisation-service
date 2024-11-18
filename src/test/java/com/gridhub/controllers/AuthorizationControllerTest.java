@@ -15,6 +15,7 @@ import com.gridhub.utilities.AuthorizationMessages;
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -50,8 +51,11 @@ class AuthorizationControllerTest {
 //    public static final String TEST_NAME_USER_SPEC = "testNameUserSpec";
     public static final String USER_SPECIFIC = "USER_SPECIFIC";
 //    public static final String ROLES = "roles";
-    private final AuthorizationController authorizationController;
-    private final AuthorizationMessages authorizationMessages;
+    @Autowired
+    private AuthorizationController authorizationController;
+    @Autowired
+    private AuthorizationMessages authorizationMessages;
+    @Autowired
     private MockMvc mockMvc;
     @MockBean
     private final AuthorizationService mockService;

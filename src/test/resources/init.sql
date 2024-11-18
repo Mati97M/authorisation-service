@@ -18,7 +18,7 @@ INSERT INTO resources (endpoint_path, service_name) VALUES
     ('/api/notification/newBlogPosted', 'Notification Microservice'),
     ('/api/notification/unhandledException', 'Notification Microservice');
 
-INSERT INTO resources_roles (resource_id, role) VALUES
+INSERT INTO resources_roles (resource_id, roles) VALUES
     (1, 'ADMIN'),
     (1, 'BUYER'),
     (1, 'LOGGED_USER'),
